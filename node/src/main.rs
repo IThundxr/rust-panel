@@ -1,5 +1,6 @@
 mod app;
 mod error;
+mod routes;
 
 use crate::app::App;
 use axum::Router;
