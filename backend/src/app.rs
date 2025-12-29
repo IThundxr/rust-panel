@@ -1,9 +1,7 @@
-pub(crate) struct App {
-    
-}
+pub(crate) struct App {}
 
 impl App {
-    pub(crate) fn new() -> Self {
-        Self {}
-    }
+	pub(crate) fn new() -> Self {
+		Self {}
+	}
 }
