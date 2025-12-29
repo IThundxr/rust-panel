@@ -1,22 +1,24 @@
+#![forbid(unsafe_code)]
+#![warn(clippy::unwrap_used)] // TODO - Change to forbid later
+
 mod app;
+mod config;
 mod error;
 mod models;
 mod routes;
 
 use crate::app::App;
+use crate::config::Config;
 use axum::Router;
 use axum::extract::State;
 use axum::http::StatusCode;
 use axum::response::IntoResponse;
 use axum::routing::get;
-use bollard::Docker;
-use russh_sftp::protocol::VERSION;
 use std::env;
-use std::sync::Arc;
 use tower_http::trace::TraceLayer;
+use tracing::level_filters::LevelFilter;
 use tracing::log::{debug, info};
 use tracing_subscriber::EnvFilter;
-use tracing_subscriber::filter::LevelFilter;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -29,11 +31,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 		.from_env_lossy();
 	tracing_subscriber::fmt().with_env_filter(env_filter).init();
 
+	let _ = Config::setup_watcher();
 	let app = App::new();
 
 	let router = Router::new()
-		.route("/status", get(|| async { StatusCode::OK }))
+		.route("/status", get(StatusCode::OK))
 		.route("/docker/version", get(docker_version))
+		.merge(routes::router())
 		.layer(TraceLayer::new_for_http())
 		.with_state(app);
 

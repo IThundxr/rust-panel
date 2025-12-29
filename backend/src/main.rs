@@ -1,3 +1,6 @@
+#![forbid(unsafe_code)]
+#![warn(clippy::unwrap_used)] // TODO - Change to forbid later
+
 mod app;
 mod error;
 

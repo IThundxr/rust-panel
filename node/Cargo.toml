@@ -7,7 +7,9 @@ authors.workspace = true
 [dependencies]
 axum.workspace = true
 bollard.workspace = true
+config.workspace = true
 dotenvy.workspace = true
+inotify.workspace = true
 russh.workspace = true
 russh-sftp.workspace = true
 serde.workspace = true

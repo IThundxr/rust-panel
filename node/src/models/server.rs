@@ -1,6 +1,6 @@
 use serde::Serialize;
 
-pub(crate) type Servers = Vec<Server>;
+pub type Servers = Vec<Server>;
 
 #[derive(Serialize)]
-pub(crate) struct Server {}
+pub struct Server {}

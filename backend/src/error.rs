@@ -8,8 +8,8 @@ use tracing::log::error;
 use uuid::Uuid;
 
 #[derive(Snafu, Debug)]
-#[snafu(visibility(pub(crate)))]
-pub(crate) enum Error {
+#[snafu(visibility(pub))]
+pub enum Error {
 	// Non route errors
 	#[snafu(display("Could not read environment variable: {source}"))]
 	MissingEnvVar { source: env::VarError },
