@@ -1,9 +1,14 @@
-pub struct App {
-    
+use bollard::Docker;
+
+#[derive(Clone)]
+pub(crate) struct App {
+    pub(crate) docker: Docker
 }
 
 impl App {
-    pub fn new() -> Self {
-        Self {}
+    pub(crate) fn new() -> Self {
+        Self {
+            docker: Docker::connect_with_socket_defaults().unwrap() // TODO - Config/Env
+        }
     }
 }

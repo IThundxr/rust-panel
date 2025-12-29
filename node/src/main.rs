@@ -1,6 +1,7 @@
 mod app;
 mod error;
 mod routes;
+mod models;
 
 use crate::app::App;
 use axum::Router;
@@ -8,7 +9,10 @@ use axum::http::StatusCode;
 use axum::routing::get;
 use std::env;
 use std::sync::Arc;
+use axum::extract::State;
+use axum::response::IntoResponse;
 use bollard::Docker;
+use russh_sftp::protocol::VERSION;
 use tower_http::trace::TraceLayer;
 use tracing::log::{debug, info};
 use tracing_subscriber::EnvFilter;
@@ -29,16 +33,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let router = Router::new()
         .route("/status", get(|| async { StatusCode::OK }))
+        .route("/docker/version", get(docker_version))
         .layer(TraceLayer::new_for_http())
-        .with_state(Arc::new(app));
+        .with_state(app);
 
     let ip = env::var("APP_IP").unwrap_or("0.0.0.0".to_string());
     let port = env::var("APP_PORT").unwrap_or("3000".to_string());
     let address = format!("{ip}:{port}");
-
-    let docker = Docker::connect_with_socket_defaults().unwrap();
-    let version = docker.version().await.unwrap();
-    println!("{:?}", version);
 
     info!("Listening on {address}");
 
@@ -46,4 +47,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     axum::serve(listener, router).await?;
 
     Ok(())
+}
+
+async fn docker_version(State(app): State<App>) -> impl IntoResponse {
+    format!("{:?}", app.docker.version().await.unwrap())
 }

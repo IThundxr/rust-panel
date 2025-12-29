@@ -9,7 +9,7 @@ use tracing::log::error;
 
 #[derive(Snafu, Debug)]
 #[snafu(visibility(pub(crate)))]
-pub enum Error {
+pub(crate) enum Error {
     // Non route errors
     #[snafu(display("Could not read environment variable: {source}"))]
     MissingEnvVar { source: env::VarError },
